@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="|${formTitle} · Problem-Solving Journal|">Форма · Problem-Solving Journal</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<header th:replace="~{fragments/header :: header}"></header>
+
+<main class="page-shell page-shell--form">
+    <a class="back-link" th:href="${cancelUrl}"><span aria-hidden="true">←</span> Отмена</a>
+
+    <section class="form-card">
+        <header class="form-card__header">
+            <p class="eyebrow" th:text="${editing ? 'Обновление записи' : 'Новая запись'}">Новая запись</p>
+            <h1 th:text="${formTitle}">Новая задача</h1>
+            <p>Поля со звёздочкой обязательны.</p>
+        </header>
+
+        <form class="task-form"
+              method="post"
+              th:action="${formAction}"
+              th:object="${taskRequest}"
+              data-task-form>
+
+            <div class="validation-summary"
+                 th:if="${#fields.hasAnyErrors()}"
+                 role="alert">
+                <strong>Проверь введённые данные</strong>
+                <ul>
+                    <li th:each="error : ${#fields.allErrors()}"
+                        th:text="${error}">Ошибка</li>
+                </ul>
+            </div>
+
+            <div class="form-field form-field--full">
+                <label for="title">Название <span aria-hidden="true">*</span></label>
+                <input id="title"
+                       type="text"
+                       maxlength="256"
+                       autocomplete="off"
+                       placeholder="Например, Two Sum"
+                       required
+                       th:field="*{title}"
+                       th:classappend="${#fields.hasErrors('title')} ? 'input--error'">
+                <p class="field-error" th:errors="*{title}">Ошибка названия</p>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-field">
+                    <label for="platform">Платформа</label>
+                    <input id="platform"
+                           type="text"
+                           maxlength="256"
+                           autocomplete="off"
+                           placeholder="LeetCode, Codeforces..."
+                           th:field="*{platform}"
+                           th:classappend="${#fields.hasErrors('platform')} ? 'input--error'">
+                    <p class="field-error" th:errors="*{platform}">Ошибка платформы</p>
+                </div>
+
+                <div class="form-field">
+                    <label for="url">Ссылка на задачу</label>
+                    <input id="url"
+                           type="url"
+                           maxlength="8196"
+                           placeholder="https://..."
+                           th:field="*{url}"
+                           th:classappend="${#fields.hasErrors('url')} ? 'input--error'">
+                    <p class="field-error" th:errors="*{url}">Ошибка ссылки</p>
+                </div>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-field">
+                    <label for="language">Язык программирования <span aria-hidden="true">*</span></label>
+                    <select id="language"
+                            required
+                            th:field="*{language}"
+                            th:classappend="${#fields.hasErrors('language')} ? 'input--error'">
+                        <option value="">Выбери язык</option>
+                        <option th:each="language : ${languages}"
+                                th:value="${language}"
+                                th:text="${languageLabels.get(language)}">Java</option>
+                    </select>
+                    <p class="field-error" th:errors="*{language}">Ошибка языка программирования</p>
+                </div>
+
+                <div class="form-field">
+                    <label for="status">Статус <span aria-hidden="true">*</span></label>
+                    <select id="status"
+                            required
+                            th:field="*{status}"
+                            th:classappend="${#fields.hasErrors('status')} ? 'input--error'">
+                        <option th:each="status : ${statuses}"
+                                th:value="${status}"
+                                th:text="${statusLabels.get(status)}">Новая</option>
+                    </select>
+                    <p class="field-error" th:errors="*{status}">Ошибка статуса</p>
+                </div>
+
+                <div class="form-field">
+                    <label for="confidence">Уверенность <span aria-hidden="true">*</span></label>
+                    <select id="confidence"
+                            required
+                            th:field="*{confidence}"
+                            th:classappend="${#fields.hasErrors('confidence')} ? 'input--error'">
+                        <option th:each="value : ${#numbers.sequence(1, 5)}"
+                                th:value="${value}"
+                                th:text="|${value} / 5|">1 / 5</option>
+                    </select>
+                    <p class="field-error" th:errors="*{confidence}">Ошибка уверенности</p>
+                </div>
+
+                <div class="form-field">
+                    <label for="solvedAt">Дата решения</label>
+                    <input id="solvedAt"
+                           type="date"
+                           th:field="*{solvedAt}"
+                           th:classappend="${#fields.hasErrors('solvedAt')} ? 'input--error'">
+                    <p class="field-error" th:errors="*{solvedAt}">Ошибка даты</p>
+                </div>
+            </div>
+
+            <fieldset class="topics-fieldset">
+                <legend>Темы <span aria-hidden="true">*</span></legend>
+                <p class="field-hint">Добавь алгоритмы и структуры данных, которые использует задача.</p>
+
+                <div class="topics-list" data-topics-list>
+                    <div class="topic-row"
+                         th:each="topic, topicStat : *{topics}">
+                        <label class="sr-only"
+                               th:for="|topic-${topicStat.index}|">Тема</label>
+                        <input type="text"
+                               name="topics"
+                               maxlength="100"
+                               autocomplete="off"
+                               placeholder="Например, arrays"
+                               required
+                               th:id="|topic-${topicStat.index}|"
+                               th:value="${topic}">
+                        <button class="icon-button"
+                                type="button"
+                                data-remove-topic
+                                aria-label="Удалить тему">Удалить</button>
+                    </div>
+                </div>
+
+                <button class="button button--secondary button--small"
+                        type="button"
+                        data-add-topic>+ Добавить тему</button>
+                <p class="field-error" th:errors="*{topics}">Ошибка тем</p>
+            </fieldset>
+
+            <div class="form-actions">
+                <a class="button button--secondary" th:href="${cancelUrl}">Отмена</a>
+                <button class="button button--primary" type="submit" th:text="${submitLabel}">
+                    Сохранить
+                </button>
+            </div>
+        </form>
+    </section>
+</main>
+
+<template id="topic-row-template">
+    <div class="topic-row">
+        <label class="sr-only">Тема</label>
+        <input type="text"
+               name="topics"
+               maxlength="100"
+               autocomplete="off"
+               placeholder="Например, two-pointers"
+               required>
+        <button class="icon-button"
+                type="button"
+                data-remove-topic
+                aria-label="Удалить тему">Удалить</button>
+    </div>
+</template>
+
+<script defer th:src="@{/js/app.js}"></script>
+</body>
+</html>

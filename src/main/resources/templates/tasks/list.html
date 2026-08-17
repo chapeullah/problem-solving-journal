@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Задачи · Problem-Solving Journal</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<header th:replace="~{fragments/header :: header}"></header>
+
+<main class="page-shell">
+    <section class="page-heading">
+        <div>
+            <p class="eyebrow">Журнал решений</p>
+            <h1>Задачи</h1>
+            <p class="page-heading__description">
+                Сохраняй решения, отмечай прогресс и возвращайся к темам для повторения.
+            </p>
+        </div>
+
+        <div class="counter" aria-label="Количество задач">
+            <strong th:text="${page.totalElements}">0</strong>
+            <span>всего</span>
+        </div>
+    </section>
+
+    <section class="empty-state" th:if="${page.empty}">
+        <div class="empty-state__icon">{ }</div>
+        <h2>Задач пока нет</h2>
+        <p>Добавь первую задачу, чтобы начать вести журнал.</p>
+        <a class="button button--primary" th:href="@{/tasks/new}">Добавить задачу</a>
+    </section>
+
+    <section th:unless="${page.empty}" aria-label="Список задач">
+        <div class="table-card">
+            <div class="table-scroll">
+                <table class="task-table">
+                    <thead>
+                    <tr>
+                        <th>Задача</th>
+                        <th>Темы</th>
+                        <th>Язык</th>
+                        <th>Статус</th>
+                        <th>Уверенность</th>
+                        <th>Обновлена</th>
+                        <th><span class="sr-only">Действия</span></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="task : ${page.content}">
+                        <td class="task-table__main">
+                            <a class="task-title"
+                               th:href="@{/tasks/{id}(id=${task.id})}"
+                               th:text="${task.title}">Two Sum</a>
+                            <span class="task-platform"
+                                  th:text="${#strings.isEmpty(task.platform) ? 'Без платформы' : task.platform}">
+                                LeetCode
+                            </span>
+                        </td>
+                        <td>
+                            <div class="tags">
+                                <span class="tag"
+                                      th:each="topic : ${task.topics}"
+                                      th:text="${topic}">arrays</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="tag"
+                                  th:if="${task.language != null}"
+                                  th:text="${languageLabels.get(task.language)}">Java</span>
+                            <span class="task-platform"
+                                  th:if="${task.language == null}">Не указан</span>
+                        </td>
+                        <td>
+                            <span class="status-badge"
+                                  th:classappend="|status--${#strings.toLowerCase(task.status.name())}|"
+                                  th:text="${statusLabels.get(task.status)}">Новая</span>
+                        </td>
+                        <td>
+                            <span class="confidence"
+                                  th:text="|${task.confidence} / 5|">3 / 5</span>
+                        </td>
+                        <td class="task-date">
+                            <time th:datetime="${task.updatedAt}"
+                                  th:text="${#temporals.format(task.updatedAt, 'dd.MM.yyyy HH:mm')}">
+                                17.08.2026 18:30
+                            </time>
+                        </td>
+                        <td class="task-table__actions">
+                            <a class="icon-link"
+                               th:href="@{/tasks/{id}/edit(id=${task.id})}"
+                               th:aria-label="|Редактировать ${task.title}|">Изменить</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <nav class="pagination"
+             th:if="${page.totalPages > 1}"
+             aria-label="Навигация по страницам">
+            <a class="button button--secondary"
+               th:classappend="${!page.hasPrevious()} ? ' is-disabled'"
+               th:href="${page.hasPrevious()} ? @{/tasks(page=${page.number - 1},size=${page.size})} : '#'"><span aria-hidden="true">←</span> Назад</a>
+
+            <span class="pagination__current"
+                  th:text="|Страница ${page.number + 1} из ${page.totalPages}|">
+                Страница 1 из 1
+            </span>
+
+            <a class="button button--secondary"
+               th:classappend="${!page.hasNext()} ? ' is-disabled'"
+               th:href="${page.hasNext()} ? @{/tasks(page=${page.number + 1},size=${page.size})} : '#'">Вперёд <span aria-hidden="true">→</span></a>
+        </nav>
+    </section>
+</main>
+
+<script defer th:src="@{/js/app.js}"></script>
+</body>
+</html>

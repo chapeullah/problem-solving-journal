@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="|${task.title} · Problem-Solving Journal|">Задача · Problem-Solving Journal</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<header th:replace="~{fragments/header :: header}"></header>
+
+<main class="page-shell page-shell--narrow">
+    <a class="back-link" th:href="@{/tasks}"><span aria-hidden="true">←</span> К списку задач</a>
+
+    <article class="detail-card">
+        <header class="detail-card__header">
+            <div>
+                <div class="detail-card__meta-line">
+                    <span class="status-badge"
+                          th:classappend="|status--${#strings.toLowerCase(task.status.name())}|"
+                          th:text="${statusLabels.get(task.status)}">Новая</span>
+                    <span class="task-platform"
+                          th:if="${!#strings.isEmpty(task.platform)}"
+                          th:text="${task.platform}">LeetCode</span>
+                </div>
+                <h1 th:text="${task.title}">Two Sum</h1>
+            </div>
+
+            <div class="detail-actions">
+                <a class="button button--secondary"
+                   th:href="@{/tasks/{id}/edit(id=${task.id})}">Редактировать</a>
+                <form method="post"
+                      th:action="@{/tasks/{id}/delete(id=${task.id})}"
+                      data-confirm="Удалить задачу без возможности восстановления?">
+                    <button class="button button--danger" type="submit">Удалить</button>
+                </form>
+            </div>
+        </header>
+
+        <dl class="detail-grid">
+            <div>
+                <dt>Темы</dt>
+                <dd>
+                    <div class="tags">
+                        <span class="tag"
+                              th:each="topic : ${task.topics}"
+                              th:text="${topic}">arrays</span>
+                    </div>
+                </dd>
+            </div>
+
+            <div>
+                <dt>Уверенность</dt>
+                <dd class="confidence confidence--large"
+                    th:text="|${task.confidence} / 5|">3 / 5</dd>
+            </div>
+
+            <div>
+                <dt>Язык решения</dt>
+                <dd th:if="${task.language != null}"
+                    th:text="${languageLabels.get(task.language)}">Java</dd>
+                <dd th:if="${task.language == null}">Не указан</dd>
+            </div>
+
+            <div>
+                <dt>Дата решения</dt>
+                <dd th:text="${task.solvedAt == null ? 'Не указана' : #temporals.format(task.solvedAt, 'dd.MM.yyyy')}">
+                    Не указана
+                </dd>
+            </div>
+
+            <div th:if="${!#strings.isEmpty(task.url)}">
+                <dt>Ссылка</dt>
+                <dd>
+                    <a class="external-link"
+                       th:href="${task.url}"
+                       target="_blank"
+                       rel="noopener noreferrer">Открыть условие <span aria-hidden="true">↗</span></a>
+                </dd>
+            </div>
+        </dl>
+
+        <footer class="detail-card__footer">
+            <span>
+                Создана
+                <time th:datetime="${task.createdAt}"
+                      th:text="${#temporals.format(task.createdAt, 'dd.MM.yyyy HH:mm')}">17.08.2026 18:00</time>
+            </span>
+            <span>
+                Обновлена
+                <time th:datetime="${task.updatedAt}"
+                      th:text="${#temporals.format(task.updatedAt, 'dd.MM.yyyy HH:mm')}">17.08.2026 18:30</time>
+            </span>
+        </footer>
+    </article>
+</main>
+
+<script defer th:src="@{/js/app.js}"></script>
+</body>
+</html>

@@ -6,17 +6,19 @@ import org.chapeullah.problemsolvingjournal.model.Task;
 import java.time.LocalDate;
 import java.util.Set;
 
-public record CreateTaskRequest(
-
+public record TaskRequest(
         @NotBlank(message = "Title is required")
         @Size(max = 256, message = "Title must not exceed 256 characters")
         String title,
 
-        @Size(max = 255, message = "Platform must not exceed 255 characters")
+        @Size(max = 256, message = "Platform must not exceed 256 characters")
         String platform,
 
         @Size(max = 8196, message = "URL must not exceed 8196 characters")
         String url,
+
+        @NotNull(message = "Programming language is required")
+        Task.ProgrammingLanguage language,
 
         @NotNull(message = "Status is required")
         Task.Status status,

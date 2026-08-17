@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Задача не найдена · Problem-Solving Journal</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<header th:replace="~{fragments/header :: header}"></header>
+
+<main class="page-shell page-shell--narrow">
+    <section class="empty-state error-state">
+        <p class="error-code">404</p>
+        <h1>Задача не найдена</h1>
+        <p th:text="${message}">Запрошенной задачи не существует.</p>
+        <a class="button button--primary" th:href="@{/tasks}">Вернуться к задачам</a>
+    </section>
+</main>
+</body>
+</html>
