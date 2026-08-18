@@ -57,9 +57,9 @@
 
             <div>
                 <dt>Язык решения</dt>
-                <dd th:if="${task.language != null}"
-                    th:text="${languageLabels.get(task.language)}">Java</dd>
-                <dd th:if="${task.language == null}">Не указан</dd>
+                <dd th:if="${!#strings.isEmpty(task.language)}"
+                    th:text="${task.language}">Java</dd>
+                <dd th:if="${#strings.isEmpty(task.language)}">Не указан</dd>
             </div>
 
             <div>

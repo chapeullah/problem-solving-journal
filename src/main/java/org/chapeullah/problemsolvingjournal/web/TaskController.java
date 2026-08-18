@@ -16,6 +16,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,12 +31,15 @@ public class TaskController {
             Task.Status.MASTERED, "Освоена",
             Task.Status.ABANDONED, "Отложена");
 
-    private static final Map<Task.ProgrammingLanguage, String> LANGUAGE_LABELS = Map.of(
-            Task.ProgrammingLanguage.JAVA, "Java",
-            Task.ProgrammingLanguage.CPP, "C++",
-            Task.ProgrammingLanguage.PYTHON, "Python",
-            Task.ProgrammingLanguage.KOTLIN, "Kotlin",
-            Task.ProgrammingLanguage.JAVASCRIPT, "JavaScript");
+    private static final List<String> LANGUAGE_SUGGESTIONS = List.of(
+            "Java",
+            "C++",
+            "Python",
+            "Kotlin",
+            "JavaScript",
+            "C#",
+            "Go",
+            "Rust");
 
     private final TaskService taskService;
 
@@ -49,14 +53,9 @@ public class TaskController {
         return STATUS_LABELS;
     }
 
-    @ModelAttribute("languages")
-    public Task.ProgrammingLanguage[] languages() {
-        return Task.ProgrammingLanguage.values();
-    }
-
-    @ModelAttribute("languageLabels")
-    public Map<Task.ProgrammingLanguage, String> languageLabels() {
-        return LANGUAGE_LABELS;
+    @ModelAttribute("languageSuggestions")
+    public List<String> languageSuggestions() {
+        return LANGUAGE_SUGGESTIONS;
     }
 
     @GetMapping("/")

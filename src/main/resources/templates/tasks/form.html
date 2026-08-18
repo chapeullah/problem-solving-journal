@@ -76,15 +76,19 @@
             <div class="form-grid">
                 <div class="form-field">
                     <label for="language">Язык программирования <span aria-hidden="true">*</span></label>
-                    <select id="language"
-                            required
-                            th:field="*{language}"
-                            th:classappend="${#fields.hasErrors('language')} ? 'input--error'">
-                        <option value="">Выбери язык</option>
-                        <option th:each="language : ${languages}"
-                                th:value="${language}"
-                                th:text="${languageLabels.get(language)}">Java</option>
-                    </select>
+                    <input id="language"
+                           type="text"
+                           list="language-suggestions"
+                           maxlength="64"
+                           autocomplete="off"
+                           placeholder="Например, Java"
+                           required
+                           th:field="*{language}"
+                           th:classappend="${#fields.hasErrors('language')} ? 'input--error'">
+                    <datalist id="language-suggestions">
+                        <option th:each="suggestion : ${languageSuggestions}"
+                                th:value="${suggestion}"></option>
+                    </datalist>
                     <p class="field-error" th:errors="*{language}">Ошибка языка программирования</p>
                 </div>
 

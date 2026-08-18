@@ -17,8 +17,9 @@ public record TaskRequest(
         @Size(max = 8196, message = "URL must not exceed 8196 characters")
         String url,
 
-        @NotNull(message = "Programming language is required")
-        Task.ProgrammingLanguage language,
+        @NotBlank(message = "Programming language is required")
+        @Size(max = 64, message = "Programming language must not exceed 64 characters")
+        String language,
 
         @NotNull(message = "Status is required")
         Task.Status status,

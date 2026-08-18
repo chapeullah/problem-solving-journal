@@ -11,7 +11,7 @@ public record TaskResponse(
         String title,
         String platform,
         String url,
-        Task.ProgrammingLanguage language,
+        String language,
         Task.Status status,
         Set<String> topics,
         Integer confidence,
@@ -24,12 +24,26 @@ public record TaskResponse(
                 task.getTitle(),
                 task.getPlatform(),
                 task.getUrl(),
-                task.getLanguage(),
+                normalizeLegacyLanguage(task.getLanguage()),
                 task.getStatus(),
                 Set.copyOf(task.getTopics()),
                 task.getConfidence(),
                 task.getSolvedAt(),
                 task.getCreatedAt(),
                 task.getUpdatedAt());
+    }
+
+    private static String normalizeLegacyLanguage(String language) {
+        if (language == null)
+            return null;
+
+        return switch (language) {
+            case "JAVA" -> "Java";
+            case "CPP" -> "C++";
+            case "PYTHON" -> "Python";
+            case "KOTLIN" -> "Kotlin";
+            case "JAVASCRIPT" -> "JavaScript";
+            default -> language;
+        };
     }
 }

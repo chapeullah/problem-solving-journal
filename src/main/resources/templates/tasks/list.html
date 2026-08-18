@@ -67,10 +67,10 @@
                         </td>
                         <td>
                             <span class="tag"
-                                  th:if="${task.language != null}"
-                                  th:text="${languageLabels.get(task.language)}">Java</span>
+                                  th:if="${!#strings.isEmpty(task.language)}"
+                                  th:text="${task.language}">Java</span>
                             <span class="task-platform"
-                                  th:if="${task.language == null}">Не указан</span>
+                                  th:if="${#strings.isEmpty(task.language)}">Не указан</span>
                         </td>
                         <td>
                             <span class="status-badge"

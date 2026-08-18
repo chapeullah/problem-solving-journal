@@ -30,14 +30,6 @@ import java.util.Set;
 @Table(name = "tasks")
 public class Task {
 
-    public enum ProgrammingLanguage {
-        JAVA,
-        CPP,
-        PYTHON,
-        KOTLIN,
-        JAVASCRIPT
-    }
-
     /**
      * NEW — not started;
      * SOLVING — in progress;
@@ -67,9 +59,8 @@ public class Task {
     @Column(name = "url", length = 8196)
     private String url;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "language", length = 32)
-    private ProgrammingLanguage language;
+    @Column(name = "language", length = 64)
+    private String language;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 32)
@@ -102,7 +93,7 @@ public class Task {
             String title,
             String platform,
             String url,
-            ProgrammingLanguage language,
+            String language,
             Status status,
             Set<String> topics,
             Integer confidence,
@@ -110,7 +101,7 @@ public class Task {
         this.title = title;
         this.platform = platform;
         this.url = url;
-        this.language = language;
+        setLanguage(language);
         this.status = status;
         this.confidence = confidence;
         this.solvedAt = solvedAt;
@@ -120,6 +111,10 @@ public class Task {
 
     public Set<String> getTopics() {
         return Collections.unmodifiableSet(topics);
+    }
+
+    public void setLanguage(String language) {
+        this.language = language == null ? null : language.trim();
     }
 
     public void setTopics(Set<String> topics) {
