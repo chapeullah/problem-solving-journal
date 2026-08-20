@@ -2,6 +2,7 @@ package org.chapeullah.problemsolvingjournal.dto;
 
 import jakarta.validation.constraints.*;
 import org.chapeullah.problemsolvingjournal.model.Task;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -36,6 +37,7 @@ public record TaskRequest(
         @Max(value = 5, message = "Confidence must not exceed 5")
         Integer confidence,
 
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
         @PastOrPresent(message = "Solved date cannot be in the future")
         LocalDate solvedAt
 
